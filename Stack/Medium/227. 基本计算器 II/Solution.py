@@ -1,6 +1,7 @@
 class Solution:
     def calculate(self, s: str) -> int:
-        stack = []
+        res = 0
+        tmp = 0
         num = 0
         last_opr = "+"
         for c in s:
@@ -8,28 +9,32 @@ class Solution:
                 pass
             elif c.isdigit():
                 num = num * 10 + int(c)
-            elif last_opr == "+":
-                stack.append(num)
+            else:
+                if last_opr == "+":
+                    tmp += num
+                elif last_opr == "-":
+                    tmp -= num
+                elif last_opr == "*":
+                    tmp *= num
+                elif last_opr == "/":
+                    tmp = int(tmp / num)
+                
+                if c == "+" or c == "-":
+                    res += tmp
+                    tmp = 0
+
                 last_opr = c
                 num = 0
-            elif last_opr == "-":
-                stack.append(-num)
-                last_opr = c
-                num = 0
-            elif last_opr == "*":
-                stack.append(stack.pop() * num)
-                last_opr = c
-                num = 0
-            elif last_opr == "/":
-                stack.append(int(stack.pop() / num))
-                last_opr = c
-                num = 0
+
         if last_opr == "+":
-            stack.append(num)
+            tmp += num
         elif last_opr == "-":
-            stack.append(-num)
+            tmp -= num
         elif last_opr == "*":
-            stack.append(stack.pop() * num)
+            tmp *= num
         elif last_opr == "/":
-            stack.append(int(stack.pop() / num))
-        return sum(stack)
+            tmp = int(tmp / num)
+
+        res += tmp
+        
+        return res
