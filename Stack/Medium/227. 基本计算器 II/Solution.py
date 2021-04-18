@@ -1,51 +1,35 @@
 class Solution:
-    def split(self, s):
-        tmp = ""
-        res = []
-        for c in s:
-            if c in ["+", "-", "*", "/"]:
-                res.append(tmp)
-                res.append(c)
-                tmp = ""
-            elif c == " ":
-                continue
-            else:
-                tmp += c
-        res.append(tmp)
-        return res
-
     def calculate(self, s: str) -> int:
-        s = self.split(s)
         stack = []
-        flag = "+"
+        num = 0
         last_opr = "+"
         for c in s:
-            if c == "":
-                continue
-            elif c in ["+", "-"]:
-                flag = c
+            if c == " ":
+                pass
+            elif c.isdigit():
+                num = num * 10 + int(c)
+            elif last_opr == "+":
+                stack.append(num)
                 last_opr = c
-            elif c in ["*", "/"]:
+                num = 0
+            elif last_opr == "-":
+                stack.append(-num)
                 last_opr = c
-            else:
-                num = int(c)
-                if last_opr == "*":
-                    top = stack.pop()
-                    if flag == "+":
-                        stack.append(top * num)
-                    else:
-                        stack.append(-top * num)
-                        flag = "+"
-                elif last_opr == "/":
-                    top = stack.pop()
-                    if flag == "+":
-                        stack.append(int(top / num))
-                    else:
-                        stack.append(int(-top / num))
-                        flag = "+"
-                elif last_opr == "+":
-                    stack.append(num)
-                else:
-                    stack.append(-num)
-                    flag = "+"
+                num = 0
+            elif last_opr == "*":
+                stack.append(stack.pop() * num)
+                last_opr = c
+                num = 0
+            elif last_opr == "/":
+                stack.append(int(stack.pop() / num))
+                last_opr = c
+                num = 0
+        if last_opr == "+":
+            stack.append(num)
+        elif last_opr == "-":
+            stack.append(-num)
+        elif last_opr == "*":
+            stack.append(stack.pop() * num)
+        elif last_opr == "/":
+            stack.append(int(stack.pop() / num))
         return sum(stack)
